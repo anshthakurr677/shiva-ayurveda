@@ -10,7 +10,7 @@
 const SUPABASE_URL  = "https://pmnjikakhvzmqvlvrfjg.supabase.co"; // ← apni URL
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtbmppa2FraHZ6bXF2bHZyZmpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxODcyMDcsImV4cCI6MjA4OTc2MzIwN30.-56dRJeH5C3l314opaT1NAs9-cATWBowoQUVUV_Iw7w";               // ← apni key
 
-const ADMIN_PASSWORD = "shiva@admin2024"; // ← admin panel password badlo
+const ADMIN_PASSWORD = "shiva@admin9630255279"; // ← admin panel password badlo
 
 const RAZORPAY_KEY = "rzp_test_YOUR_KEY"; // ← Razorpay key (baad mein)
 
