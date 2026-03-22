@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart – SHIVA AYURVEDA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="container nav-wrap">
+    <a href="index.html" class="logo"><div class="logo-icon">🌿</div> SHIVA AYURVEDA</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a><a href="products.html">Products</a>
+      <a href="about.html">About</a><a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="cart.html" class="cart-btn">🛒<span class="cart-count">0</span></a>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</header>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="index.html">Home</a><a href="products.html">Products</a>
+  <a href="about.html">About Us</a><a href="contact.html">Contact</a>
+</nav>
+
+<!-- CONTENT -->
+<div class="page-top">
+  <div class="container section-sm">
+    <h2 style="color:var(--forest);margin-bottom:2rem;font-family:var(--font-d)">Your Cart</h2>
+
+    <div class="cart-layout">
+      <!-- Cart Items -->
+      <div>
+        <div class="cart-box">
+          <div class="cart-box-hd"><h3 id="cartHeading">Your Items</h3></div>
+          <div id="cartItems"></div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-sum" id="summaryBox">
+        <div id="summaryContent">
+          <h3>Order Summary</h3>
+          <div class="sum-row"><span class="sum-lbl">Subtotal</span><span class="sum-val" id="sumSubtotal">₹0</span></div>
+          <div class="sum-row"><span class="sum-lbl">Shipping</span><span class="sum-val" id="sumShipping">Free</span></div>
+          <div class="sum-row"><span class="sum-lbl">GST (18%)</span><span class="sum-val" id="sumTax">₹0</span></div>
+          <div class="sum-row total"><span class="sum-lbl">Total</span><span class="sum-val" id="sumTotal">₹0</span></div>
+
+          <div class="coupon-row">
+            <input class="form-input" type="text" id="couponInput" placeholder="Coupon code" style="border-radius:50px;font-size:.85rem">
+            <button class="btn btn-outline btn-sm" onclick="applyCoupon()">Apply</button>
+          </div>
+          <div class="promo-box">🎁 Use code <strong>SHIVA10</strong> for 10% off!</div>
+
+          <button class="btn btn-primary btn-full" id="checkoutBtn" onclick="openCheckout()" style="margin-bottom:.75rem">Proceed to Checkout →</button>
+          <a href="products.html" class="btn btn-outline btn-full">← Continue Shopping</a>
+
+          <!-- Checkout Form -->
+          <div class="checkout-sec" id="checkoutSec">
+            <div class="co-title">📦 Delivery Details</div>
+            <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="coName" placeholder="Your full name" style="font-size:.85rem"></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="coEmail" placeholder="Email" style="font-size:.85rem"></div>
+              <div class="form-group"><label class="form-label">Phone</label><input class="form-input" type="tel" id="coPhone" placeholder="+91" style="font-size:.85rem"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Delivery Address</label><textarea class="form-input" id="coAddr" rows="2" style="font-size:.85rem;min-height:70px" placeholder="Street, City, State, PIN Code"></textarea></div>
+
+            <div class="co-title">💳 Payment Method</div>
+            <div class="pay-opts">
+              <label class="pay-opt sel" onclick="selPay(this)">
+                <input type="radio" name="pay" checked>
+                <span class="pay-icon">📱</span><span class="pay-label">UPI (GPay, PhonePe, Paytm)</span>
+              </label>
+              <label class="pay-opt" onclick="selPay(this)">
+                <input type="radio" name="pay">
+                <span class="pay-icon">💳</span><span class="pay-label">Credit / Debit Card</span>
+              </label>
+              <label class="pay-opt" onclick="selPay(this)">
+                <input type="radio" name="pay">
+                <span class="pay-icon">🏦</span><span class="pay-label">Net Banking</span>
+              </label>
+              <label class="pay-opt" onclick="selPay(this)">
+                <input type="radio" name="pay">
+                <span class="pay-icon">🚪</span><span class="pay-label">Cash on Delivery</span>
+              </label>
+            </div>
+            <button class="btn btn-amber btn-full" style="margin-top:1rem" onclick="placeOrder()">🔒 Place Order Securely</button>
+          </div>
+        </div>
+
+        <!-- Order Confirmed -->
+        <div class="order-done" id="orderDone">
+          <div class="order-done-icon">🎉</div>
+          <h3>Order Placed Successfully!</h3>
+          <p>You'll receive a confirmation email. Delivery in 3–5 business days.</p>
+          <a href="products.html" class="btn btn-primary">Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none;padding-top:0">
+      <p>© 2024 SHIVA AYURVEDA. All rights reserved. Made with 💚 in India.</p>
+      <div class="footer-bl"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script>
+let couponApplied = false;
+let selectedPayment = 'UPI';
+
+function renderCart() {
+  const cart = getCart();
+  const heading = document.getElementById('cartHeading');
+  const itemsEl = document.getElementById('cartItems');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+
+  heading.textContent = `Your Items (${cart.length})`;
+  checkoutBtn.style.opacity = cart.length ? '1' : '0.5';
+
+  if (!cart.length) {
+    itemsEl.innerHTML = `<div class="empty-cart"><div class="empty-icon">🛒</div><h3>Your cart is empty</h3><p style="margin-bottom:1.5rem">Explore our Ayurvedic products and start your wellness journey.</p><a href="products.html" class="btn btn-primary">Shop Now</a></div>`;
+    updateSummary();
+    return;
+  }
+
+  itemsEl.innerHTML = cart.map(item => `
+    <div class="c-item">
+      <div class="c-item-img">
+        ${item.image_url ? `<img src="${item.image_url}" alt="${item.name}" onerror="this.style.display='none'">` : `<span style="font-size:1.8rem">${item.emoji||'🌿'}</span>`}
+      </div>
+      <div class="c-item-info">
+        <div class="c-item-cat">${item.category_label||''}</div>
+        <div class="c-item-name">${item.name}</div>
+        <div class="c-item-row">
+          <div class="qty-ctrl" style="border-color:var(--border)">
+            <button class="qty-btn" onclick="updateQty(${item.id},-1)">−</button>
+            <span class="qty-val">${item.qty}</span>
+            <button class="qty-btn" onclick="updateQty(${item.id},1)">+</button>
+          </div>
+          <span class="c-remove" onclick="removeFromCart(${item.id});renderCart()">🗑 Remove</span>
+        </div>
+      </div>
+      <div class="c-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
+    </div>`).join('');
+  updateSummary();
+}
+
+function updateQty(id, d) {
+  const cart = getCart();
+  const item = cart.find(c => c.id === id);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + d);
+  saveCart(cart);
+  renderCart();
+}
+
+function updateSummary() {
+  const cart = getCart();
+  const sub      = cart.reduce((s,c) => s + c.price * c.qty, 0);
+  const disc     = couponApplied ? Math.round(sub * .10) : 0;
+  const after    = sub - disc;
+  const tax      = Math.round(after * .18);
+  const shipping = after >= 999 ? 0 : 99;
+  const total    = after + tax + shipping;
+  document.getElementById('sumSubtotal').textContent = '₹' + sub.toLocaleString('en-IN');
+  document.getElementById('sumShipping').textContent = shipping === 0 ? 'Free 🎉' : '₹' + shipping;
+  document.getElementById('sumTax').textContent      = '₹' + tax.toLocaleString('en-IN');
+  document.getElementById('sumTotal').textContent    = '₹' + total.toLocaleString('en-IN');
+  return { sub, tax, shipping, total, disc };
+}
+
+function applyCoupon() {
+  const code = document.getElementById('couponInput').value.trim().toUpperCase();
+  const disc = COUPON_CODES[code];
+  if (disc) { couponApplied = true; updateSummary(); showToast(`🎉 Coupon applied! ${disc}% off.`); }
+  else showToast('❌ Invalid code. Try SHIVA10', 'error');
+}
+
+function openCheckout() {
+  if (!getCart().length) { showToast('Your cart is empty!', 'error'); return; }
+  const sec = document.getElementById('checkoutSec');
+  sec.classList.toggle('open');
+  if (sec.classList.contains('open')) sec.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function selPay(el) {
+  document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  el.querySelector('input').checked = true;
+  selectedPayment = el.querySelector('.pay-label').textContent;
+}
+
+async function placeOrder() {
+  const name  = document.getElementById('coName').value.trim();
+  const email = document.getElementById('coEmail').value.trim();
+  const phone = document.getElementById('coPhone').value.trim();
+  const addr  = document.getElementById('coAddr').value.trim();
+  if (!name || !email || !phone || !addr) { showToast('Please fill all delivery details!', 'error'); return; }
+
+  const cart = getCart();
+  const { sub, tax, shipping, total } = updateSummary();
+  const orderNum = 'SA' + Date.now().toString().slice(-6);
+
+  try {
+    const { error } = await db.from('orders').insert({
+      order_number:   orderNum,
+      customer_name:  name,
+      email, phone,
+      address:        addr,
+      items:          cart,
+      subtotal:       sub,
+      tax, shipping, total,
+      payment_method: selectedPayment,
+      status:         'pending',
+      coupon_used:    couponApplied ? 'SHIVA10' : null,
+    });
+    if (error) throw error;
+    clearCart();
+    document.getElementById('summaryContent').style.display = 'none';
+    document.getElementById('orderDone').style.display = 'block';
+  } catch(e) {
+    showToast('Could not place order. Please try again.', 'error');
+  }
+}
+
+renderCart();
+</script>
+</body>
+</html>

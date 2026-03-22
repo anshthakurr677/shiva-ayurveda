@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products – SHIVA AYURVEDA</title>
+  <meta name="description" content="Shop all authentic Ayurvedic products by SHIVA AYURVEDA.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="container nav-wrap">
+    <a href="index.html" class="logo"><div class="logo-icon">🌿</div> SHIVA AYURVEDA</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="products.html" class="active">Products</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="cart.html" class="cart-btn">🛒<span class="cart-count">0</span></a>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</header>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="index.html">Home</a><a href="products.html">Products</a>
+  <a href="about.html">About Us</a><a href="contact.html">Contact</a><a href="cart.html">Cart 🛒</a>
+</nav>
+
+<!-- PAGE HEADER -->
+<div style="background:linear-gradient(135deg,var(--forest-dk),var(--forest));padding:7rem 0 4rem;text-align:center">
+  <div class="badge" style="color:var(--leaf);background:rgba(181,204,159,.15);border-color:rgba(181,204,159,.25);margin-bottom:1rem">Our Range</div>
+  <h1 style="color:#fff;margin-bottom:.8rem">All Products</h1>
+  <p style="color:rgba(255,255,255,.7);max-width:500px;margin:0 auto">Explore our complete range of authentic Ayurvedic formulations.</p>
+</div>
+
+<!-- PRODUCTS -->
+<section class="section">
+  <div class="container">
+
+    <!-- Search + Filter -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+      <div style="position:relative">
+        <input type="text" class="form-input" id="searchInput" placeholder="🔍  Search products..." style="min-width:260px;padding-left:1rem" oninput="filterAndRender()">
+      </div>
+      <div style="font-size:.85rem;color:var(--muted)">Showing <span id="countLabel">—</span> products</div>
+    </div>
+
+    <div class="filters" id="filterBtns">
+      <button class="f-btn active" onclick="setFilter('all',this)">All</button>
+      <button class="f-btn" onclick="setFilter('immunity',this)">Immunity</button>
+      <button class="f-btn" onclick="setFilter('stress',this)">Stress & Sleep</button>
+      <button class="f-btn" onclick="setFilter('digestion',this)">Digestion</button>
+      <button class="f-btn" onclick="setFilter('skin',this)">Skin & Hair</button>
+      <button class="f-btn" onclick="setFilter('joints',this)">Joints & Pain</button>
+    </div>
+
+    <div class="products-grid" id="productsGrid">
+      <div class="loader-wrap"><div class="spinner"></div><p>Loading products...</p></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">🌿 SHIVA AYURVEDA</div>
+        <p>Pure Ayurvedic formulations crafted with ancient wisdom and modern standards.</p>
+        <div class="trust-row-f">
+          <span class="trust-f"><span>✅</span> GMP Certified</span>
+          <span class="trust-f"><span>🇮🇳</span> Made in India</span>
+        </div>
+      </div>
+      <div class="footer-col"><h5>Quick Links</h5><ul>
+        <li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li>
+        <li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Policies</h5><ul>
+        <li><a href="#">Privacy Policy</a></li><li><a href="#">Return Policy</a></li>
+        <li><a href="#">Shipping Info</a></li><li><a href="#">FAQ</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Contact</h5>
+        <p style="font-size:.86rem">hello@shivaayurveda.in<br>+91 98765 43210<br>Rishikesh, Uttarakhand</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 SHIVA AYURVEDA. All rights reserved. Made with 💚 in India.</p>
+    </div>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop">↑</button>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script>
+let allProducts = [];
+let activeFilter = 'all';
+
+async function loadProducts() {
+  const grid = document.getElementById('productsGrid');
+  try {
+    const { data, error } = await db.from('products').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    allProducts = data || [];
+    filterAndRender();
+  } catch(e) {
+    grid.innerHTML = `<div class="error-state"><span>⚠️</span><p>Could not load products. Check your Supabase config in js/config.js</p></div>`;
+  }
+}
+
+function setFilter(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterAndRender();
+}
+
+function filterAndRender() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = allProducts;
+  if (activeFilter !== 'all') filtered = filtered.filter(p => p.category === activeFilter);
+  if (q) filtered = filtered.filter(p => p.name.toLowerCase().includes(q) || p.short_desc?.toLowerCase().includes(q));
+  document.getElementById('countLabel').textContent = filtered.length;
+  const grid = document.getElementById('productsGrid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="error-state" style="grid-column:1/-1"><span>🔍</span><p>No products found. Try a different search or filter.</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(p => `
+    <div class="p-card" onclick="location.href='product-detail.html?id=${p.id}'">
+      <div class="p-card-img">
+        ${p.badge ? `<div class="p-badge">${p.badge}</div>` : ''}
+        <button class="wish-btn" onclick="event.stopPropagation();this.classList.toggle('active');this.textContent=this.classList.contains('active')?'♥':'♡'" aria-label="Wishlist">♡</button>
+        ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}" onerror="this.style.display='none'">` : `<span class="emoji-fallback">${p.emoji||'🌿'}</span>`}
+      </div>
+      <div class="p-body">
+        <div class="p-cat">${p.category_label||''}</div>
+        <div class="p-name">${p.name}</div>
+        <div class="p-desc">${p.short_desc||''}</div>
+        <div class="p-foot">
+          <div><span class="p-price">₹${p.price}</span><span class="p-old">₹${p.old_price}</span></div>
+          <button class="atc-btn" onclick="event.stopPropagation();addToCart(${JSON.stringify(p).replace(/"/g,'&quot;')})">+ Cart</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+loadProducts();
+</script>
+</body>
+</html>

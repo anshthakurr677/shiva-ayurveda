@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product – SHIVA AYURVEDA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="container nav-wrap">
+    <a href="index.html" class="logo"><div class="logo-icon">🌿</div> SHIVA AYURVEDA</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a><a href="products.html" class="active">Products</a>
+      <a href="about.html">About</a><a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="cart.html" class="cart-btn">🛒<span class="cart-count">0</span></a>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</header>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="index.html">Home</a><a href="products.html">Products</a>
+  <a href="about.html">About Us</a><a href="contact.html">Contact</a><a href="cart.html">Cart 🛒</a>
+</nav>
+
+<!-- CONTENT -->
+<div class="page-top">
+  <div class="container section-sm">
+    <div id="pageContent">
+      <div class="loader-wrap"><div class="spinner"></div><p>Loading product...</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">🌿 SHIVA AYURVEDA</div>
+        <p>Pure Ayurvedic formulations crafted with ancient wisdom.</p>
+      </div>
+      <div class="footer-col"><h5>Quick Links</h5><ul>
+        <li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li>
+        <li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Policies</h5><ul>
+        <li><a href="#">Privacy Policy</a></li><li><a href="#">Return Policy</a></li>
+        <li><a href="#">Shipping Info</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Contact</h5>
+        <p style="font-size:.86rem">hello@shivaayurveda.in<br>+91 98765 43210</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 SHIVA AYURVEDA. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop">↑</button>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script>
+let currentProduct = null;
+let qty = 1;
+
+async function loadProduct() {
+  const id = getParam('id');
+  if (!id) { document.getElementById('pageContent').innerHTML = `<div class="error-state"><span>⚠️</span><p>No product selected. <a href="products.html" style="color:var(--forest)">Browse products →</a></p></div>`; return; }
+  try {
+    const { data, error } = await db.from('products').select('*').eq('id', id).single();
+    if (error || !data) throw error;
+    currentProduct = data;
+    document.title = `${data.name} – SHIVA AYURVEDA`;
+    renderProduct(data);
+  } catch(e) {
+    document.getElementById('pageContent').innerHTML = `<div class="error-state"><span>⚠️</span><p>Product not found.</p></div>`;
+  }
+}
+
+function renderProduct(p) {
+  const ingredients = Array.isArray(p.ingredients) ? p.ingredients : (p.ingredients ? JSON.parse(p.ingredients) : []);
+  const benefits    = Array.isArray(p.benefits)    ? p.benefits    : (p.benefits    ? JSON.parse(p.benefits)    : []);
+  const usage       = Array.isArray(p.usage_steps) ? p.usage_steps : (p.usage_steps ? JSON.parse(p.usage_steps) : []);
+
+  document.getElementById('pageContent').innerHTML = `
+    <div class="breadcrumb">
+      <a href="index.html">Home</a><span>›</span>
+      <a href="products.html">Products</a><span>›</span>
+      <span>${p.name}</span>
+    </div>
+    <div class="detail-grid">
+      <!-- Gallery -->
+      <div class="detail-gallery">
+        <div class="main-img" id="mainImg">
+          ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}" onerror="this.style.display='none'">` : `<span style="font-size:7rem">${p.emoji||'🌿'}</span>`}
+        </div>
+        <div class="thumbs">
+          <div class="thumb active" onclick="setThumb(this,'${p.image_url||''}','${p.emoji||'🌿'}')">
+            ${p.image_url ? `<img src="${p.image_url}" alt="">` : `<span>${p.emoji||'🌿'}</span>`}
+          </div>
+          <div class="thumb" onclick="setThumb(this,'','🌿')"><span>🌿</span></div>
+          <div class="thumb" onclick="setThumb(this,'','🍃')"><span>🍃</span></div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div>
+        <div class="detail-cat">${p.category_label||''}</div>
+        <h1 class="detail-name" style="font-size:clamp(1.8rem,3vw,2.5rem)">${p.name}</h1>
+        <div class="rating-row">
+          <div class="stars">★★★★★</div>
+          <span class="r-count">(128 reviews)</span>
+          ${p.badge ? `<span class="tag-pill">${p.badge}</span>` : ''}
+        </div>
+        <div class="detail-price">
+          ₹${p.price}
+          ${p.old_price ? `<span class="old">₹${p.old_price}</span>` : ''}
+        </div>
+        <p class="detail-desc">${p.short_desc||''}</p>
+
+        <div class="qty-row">
+          <label>Quantity:</label>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <input class="qty-val" id="qtyVal" value="1" readonly>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          <button class="btn btn-primary" onclick="handleAddToCart()">🛒 Add to Cart</button>
+          <a href="cart.html" class="btn btn-amber" onclick="handleAddToCart()">⚡ Buy Now</a>
+        </div>
+
+        <div class="trust-row">
+          <span>✅ Free shipping above ₹999</span>
+          <span>🔄 30-day returns</span>
+          <span>🔒 Secure checkout</span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('desc',this)">Description</button>
+            <button class="tab-btn" onclick="showTab('ing',this)">Ingredients</button>
+            <button class="tab-btn" onclick="showTab('ben',this)">Benefits</button>
+            <button class="tab-btn" onclick="showTab('use',this)">How to Use</button>
+          </div>
+          <div id="tab-desc" class="tab-pane active"><p>${p.description||p.short_desc||''}</p></div>
+          <div id="tab-ing"  class="tab-pane">
+            <p>100% natural, ethically sourced from certified organic farms across India.</p>
+            <div class="ing-list">${ingredients.map(i=>`<span class="ing-tag">🌿 ${i}</span>`).join('')}</div>
+          </div>
+          <div id="tab-ben" class="tab-pane">
+            <div class="ben-list">${benefits.map(b=>`<div class="ben-item"><span class="ben-icon">${b.icon||'✅'}</span><span class="ben-text">${b.text||b}</span></div>`).join('')}</div>
+          </div>
+          <div id="tab-use" class="tab-pane">
+            <div class="steps">${usage.map((u,i)=>`<div class="step"><div class="step-num">${i+1}</div><div class="step-text">${u}</div></div>`).join('')}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function changeQty(d) {
+  qty = Math.max(1, qty + d);
+  document.getElementById('qtyVal').value = qty;
+}
+function setThumb(el, imgUrl, emoji) {
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const main = document.getElementById('mainImg');
+  main.innerHTML = imgUrl ? `<img src="${imgUrl}" alt="">` : `<span style="font-size:7rem">${emoji}</span>`;
+}
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function handleAddToCart() {
+  if (!currentProduct) return;
+  addToCart(currentProduct, qty);
+}
+
+loadProduct();
+</script>
+</body>
+</html>

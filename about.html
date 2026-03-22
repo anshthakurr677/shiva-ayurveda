@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us – SHIVA AYURVEDA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header id="header">
+  <div class="container nav-wrap">
+    <a href="index.html" class="logo"><div class="logo-icon">🌿</div> SHIVA AYURVEDA</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a><a href="products.html">Products</a>
+      <a href="about.html" class="active">About</a><a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="cart.html" class="cart-btn">🛒<span class="cart-count">0</span></a>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</header>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="index.html">Home</a><a href="products.html">Products</a>
+  <a href="about.html">About Us</a><a href="contact.html">Contact</a><a href="cart.html">Cart 🛒</a>
+</nav>
+
+<!-- ABOUT HERO -->
+<div class="about-hero">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="badge" style="margin-bottom:1rem">Est. 2010 · Our Story</div>
+        <h1 style="color:var(--forest);margin-bottom:1.3rem">Rooted in Ancient<br><em style="font-style:italic;color:var(--sage)">Indian Wisdom</em></h1>
+        <p style="margin-bottom:1.3rem">SHIVA AYURVEDA was born from a simple belief — that nature holds the cure for every ailment. Founded in 2010 in the foothills of the Himalayas, our journey began with a deep reverence for Ayurvedic traditions passed down through generations.</p>
+        <p style="margin-bottom:1.5rem">The name SHIVA AYURVEDA is a tribute to the ancient vaidyas who found remedies in every leaf, root, and bark of the forest. We carry that legacy forward, blending timeless wisdom with modern science.</p>
+        <a href="products.html" class="btn btn-primary">Explore Our Products</a>
+      </div>
+      <div style="position:relative;display:flex;justify-content:center">
+        <div class="about-img">🌿</div>
+        <div class="about-float">
+          <div class="af-val">5000+</div>
+          <div class="af-lbl">Years of Ayurvedic Heritage</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VALUES -->
+<section class="section values-bg">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="badge">Our Values</div>
+      <h2>Mission & Vision</h2>
+      <p>We exist to make authentic Ayurveda accessible to every Indian household.</p>
+      <div class="divider"><span>🌿</span></div>
+    </div>
+    <div class="val-grid">
+      <div class="val-card reveal d1"><div class="val-icon">🎯</div><h4>Our Mission</h4><p>To craft the purest Ayurvedic products using traditional formulations, certified organic ingredients, and rigorous quality standards — making holistic wellness simple and accessible.</p></div>
+      <div class="val-card reveal d2"><div class="val-icon">🔭</div><h4>Our Vision</h4><p>A world where natural, chemical-free living is the norm. SHIVA AYURVEDA as the most trusted name in Ayurvedic wellness — for families today and generations to come.</p></div>
+      <div class="val-card reveal d3"><div class="val-icon">🤝</div><h4>Our Promise</h4><p>No harmful chemicals, no compromise on quality, transparent ingredients, and fair pricing. Your health is sacred to us.</p></div>
+      <div class="val-card reveal d4"><div class="val-icon">🌱</div><h4>Sustainability</h4><p>We partner with local farmers, practice ethical harvesting, use eco-friendly packaging, and reinvest in reforestation initiatives.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+  <div class="container">
+    <div class="cta-inner">
+      <h2>Be a Part of the SHIVA AYURVEDA Family</h2>
+      <p>Start your Ayurvedic wellness journey today.</p>
+      <div class="cta-btns">
+        <a href="products.html" class="btn btn-amber btn-lg">Shop Now</a>
+        <a href="contact.html"  class="btn btn-white btn-lg">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand"><div class="footer-logo">🌿 SHIVA AYURVEDA</div><p>Pure Ayurvedic formulations crafted with ancient wisdom and modern standards.</p></div>
+      <div class="footer-col"><h5>Quick Links</h5><ul><li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div class="footer-col"><h5>Policies</h5><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Return Policy</a></li><li><a href="#">Shipping Info</a></li></ul></div>
+      <div class="footer-col"><h5>Contact</h5><p style="font-size:.86rem">hello@shivaayurveda.in<br>+91 98765 43210<br>Rishikesh, Uttarakhand</p></div>
+    </div>
+    <div class="footer-bottom"><p>© 2024 SHIVA AYURVEDA. All rights reserved. Made with 💚 in India.</p></div>
+  </div>
+</footer>
+<button class="back-top" id="backTop">↑</button>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script><script src="js/utils.js"></script>
+</body>
+</html>
