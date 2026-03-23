@@ -99,29 +99,8 @@
             <div class="form-group"><label class="form-label">Price (₹) *</label><input class="form-input" type="number" id="pPrice" placeholder="649"></div>
             <div class="form-group"><label class="form-label">Old Price (₹)</label><input class="form-input" type="number" id="pOldPrice" placeholder="899"></div>
             <div class="form-group"><label class="form-label">Badge</label><input class="form-input" id="pBadge" placeholder="e.g. Best Seller, New"></div>
-            <div class="form-group"><label class="form-label">Emoji (fallback if no image)</label><input class="form-input" id="pEmoji" placeholder="🫙"></div>
-
-            <!-- IMAGE UPLOAD -->
-            <div class="form-group full">
-              <label class="form-label">Product Images (Gallery se select karo)</label>
-              <div id="uploadBox" onclick="document.getElementById('imageFileInput').click()"
-                style="border:2px dashed var(--border);border-radius:var(--r-lg);padding:2rem;text-align:center;cursor:pointer;background:var(--cream);transition:border-color .3s;">
-                <div id="uploadPlaceholder">
-                  <div style="font-size:2.5rem;margin-bottom:.5rem">📷</div>
-                  <div style="font-weight:600;color:var(--forest);margin-bottom:.3rem">Tap karke Gallery se photos choose karo</div>
-                  <div style="font-size:.8rem;color:var(--muted)">Ek ya multiple images select kar sakte ho</div>
-                  <div style="font-size:.75rem;color:var(--sand);margin-top:.3rem">JPG, PNG, WebP • Max 5MB each</div>
-                </div>
-                <div id="uploadProgress" style="display:none;flex-direction:column;align-items:center;gap:.5rem">
-                  <div class="spinner"></div>
-                  <div style="font-size:.88rem;color:var(--forest)" id="uploadProgressText">Uploading...</div>
-                </div>
-              </div>
-              <input type="file" id="imageFileInput" accept="image/*" multiple style="display:none" onchange="handleImageUpload(this)">
-              <div id="imagePreviews" style="display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1rem"></div>
-              <input type="hidden" id="pImageUrl">
-              <input type="hidden" id="pAllImages">
-            </div>
+            <div class="form-group"><label class="form-label">Emoji (fallback)</label><input class="form-input" id="pEmoji" placeholder="🫙"></div>
+            <div class="form-group"><label class="form-label">Image URL</label><input class="form-input" id="pImageUrl" placeholder="https://... or images/product.jpg"></div>
             <div class="form-group full"><label class="form-label">Short Description *</label><input class="form-input" id="pShortDesc" placeholder="One-line description for product card"></div>
             <div class="form-group full"><label class="form-label">Full Description</label><textarea class="form-input" id="pDesc" rows="3" placeholder="Detailed product description..."></textarea></div>
             <div class="form-group full"><label class="form-label">Ingredients (comma separated)</label><input class="form-input" id="pIngredients" placeholder="Ashwagandha, Shilajit, Black Pepper"></div>
@@ -145,7 +124,7 @@
         <div class="admin-topbar"><h2>Orders</h2></div>
         <div class="admin-card">
           <div style="overflow-x:auto"><table class="admin-table">
-            <thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Address</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
             <tbody id="ordersTableBody"><tr><td colspan="9" style="text-align:center;color:#9ca3af;padding:2rem">Loading...</td></tr></tbody>
           </table></div>
         </div>
@@ -172,112 +151,6 @@
 <script src="js/config.js"></script>
 <script src="js/utils.js"></script>
 <script>
-/* ── Image Upload to Supabase Storage ── */
-async function handleImageUpload(input) {
-  const files = Array.from(input.files);
-  if (!files.length) return;
-
-  const box      = document.getElementById('uploadBox');
-  const ph       = document.getElementById('uploadPlaceholder');
-  const progress = document.getElementById('uploadProgress');
-  const progText = document.getElementById('uploadProgressText');
-  const previews = document.getElementById('imagePreviews');
-
-  // Show progress
-  ph.style.display       = 'none';
-  progress.style.display = 'flex';
-  box.style.borderColor  = 'var(--forest)';
-
-  const uploadedUrls = [];
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    progText.textContent = `Uploading ${i + 1} of ${files.length}: ${file.name}`;
-
-    // Validate size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      showToast(`❌ ${file.name} is too large! Max 5MB.`, 'error');
-      continue;
-    }
-
-    // Unique filename
-    const ext      = file.name.split('.').pop();
-    const filename = `products/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-
-    const { data, error } = await db.storage
-      .from('product-images')
-      .upload(filename, file, { cacheControl: '3600', upsert: false });
-
-    if (error) {
-      showToast(`❌ Upload failed: ${error.message}`, 'error');
-      continue;
-    }
-
-    // Get public URL
-    const { data: urlData } = db.storage
-      .from('product-images')
-      .getPublicUrl(filename);
-
-    uploadedUrls.push(urlData.publicUrl);
-  }
-
-  // Reset upload box
-  ph.style.display       = 'block';
-  progress.style.display = 'none';
-  box.style.borderColor  = uploadedUrls.length ? 'var(--forest)' : 'var(--border)';
-  input.value = '';
-
-  if (!uploadedUrls.length) return;
-
-  // Save URLs
-  const existing = document.getElementById('pAllImages').value;
-  const allUrls  = existing
-    ? existing.split(',').concat(uploadedUrls)
-    : uploadedUrls;
-
-  document.getElementById('pAllImages').value = allUrls.join(',');
-  document.getElementById('pImageUrl').value  = allUrls[0]; // first = main image
-
-  // Render previews
-  renderPreviews(allUrls);
-  showToast(`✅ ${uploadedUrls.length} image(s) uploaded!`);
-}
-
-function renderPreviews(urls) {
-  const container = document.getElementById('imagePreviews');
-  container.innerHTML = urls.map((url, i) => `
-    <div style="position:relative;display:inline-block">
-      <img src="${url}" alt="Product image"
-        style="width:90px;height:90px;object-fit:cover;border-radius:var(--r);
-               border:2px solid ${i === 0 ? 'var(--forest)' : 'var(--border)'};cursor:pointer"
-        onclick="setMainImage('${url}')"
-        title="Tap to set as main image">
-      ${i === 0 ? '<div style="position:absolute;top:-6px;left:-6px;background:var(--forest);color:#fff;border-radius:50%;width:20px;height:20px;font-size:.6rem;display:flex;align-items:center;justify-content:center;font-weight:700">★</div>' : ''}
-      <button onclick="removeImage('${url}')"
-        style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;
-               background:#dc2626;color:#fff;border-radius:50%;font-size:.7rem;
-               display:flex;align-items:center;justify-content:center;border:none;cursor:pointer">✕</button>
-    </div>`).join('');
-}
-
-function setMainImage(url) {
-  document.getElementById('pImageUrl').value = url;
-  const allUrls = document.getElementById('pAllImages').value.split(',');
-  // Move selected to front
-  const reordered = [url, ...allUrls.filter(u => u !== url)];
-  document.getElementById('pAllImages').value = reordered.join(',');
-  renderPreviews(reordered);
-  showToast('⭐ Main image set!');
-}
-
-function removeImage(url) {
-  const allUrls = document.getElementById('pAllImages').value
-    .split(',').filter(u => u !== url);
-  document.getElementById('pAllImages').value = allUrls.join(',');
-  document.getElementById('pImageUrl').value  = allUrls[0] || '';
-  renderPreviews(allUrls);
-}
-
 /* ── Login ── */
 function doLogin() {
   const pass = document.getElementById('loginPass').value;
@@ -426,12 +299,6 @@ async function editProduct(id) {
   document.getElementById('pBenefits').value = bens.map(b => `${b.icon||'✅'}|${b.text||b}`).join('\n');
   const use = Array.isArray(p.usage_steps) ? p.usage_steps : (p.usage_steps ? JSON.parse(p.usage_steps) : []);
   document.getElementById('pUsage').value = use.join('\n');
-  // Show existing image
-  if (p.image_url) {
-    document.getElementById('pImageUrl').value  = p.image_url;
-    document.getElementById('pAllImages').value = p.image_url;
-    renderPreviews([p.image_url]);
-  }
   document.getElementById('productFormTitle').textContent = 'Edit Product';
   showSection('add-product', document.querySelector('.admin-nav a:nth-child(3)'));
 }
@@ -445,14 +312,11 @@ async function deleteProduct(id, name) {
 }
 
 function resetProductForm() {
-  ['editProductId','pName','pCatLabel','pPrice','pOldPrice','pBadge','pEmoji',
-   'pImageUrl','pAllImages','pShortDesc','pDesc','pIngredients','pBenefits','pUsage'].forEach(id => {
+  ['editProductId','pName','pCatLabel','pPrice','pOldPrice','pBadge','pEmoji','pImageUrl','pShortDesc','pDesc','pIngredients','pBenefits','pUsage'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
   document.getElementById('pFeatured').checked = false;
-  document.getElementById('imagePreviews').innerHTML = '';
-  document.getElementById('uploadBox').style.borderColor = 'var(--border)';
 }
 
 /* ── Orders ── */
@@ -465,7 +329,11 @@ async function loadOrders() {
       <td><strong>${o.order_number||'—'}</strong></td>
       <td>${o.customer_name||'—'}</td>
       <td>${o.phone||'—'}</td>
-      <td style="max-width:160px;font-size:.78rem">${items.map(i=>`${i.name}×${i.qty}`).join(', ')}</td>
+      <td style="max-width:200px;font-size:.78rem;line-height:1.5">
+        <div><strong>📍</strong> ${o.address||'—'}</div>
+        ${o.email ? `<div style="margin-top:.2rem;color:#6b7280">✉️ ${o.email}</div>` : ''}
+      </td>
+      <td style="max-width:160px;font-size:.78rem">${items.map(i=>`${i.name} ×${i.qty}`).join('<br>')}</td>
       <td><strong>₹${(o.total||0).toLocaleString('en-IN')}</strong></td>
       <td style="font-size:.78rem">${o.payment_method||'—'}</td>
       <td>
@@ -475,7 +343,10 @@ async function loadOrders() {
         </select>
       </td>
       <td style="font-size:.78rem">${new Date(o.created_at).toLocaleDateString('en-IN')}</td>
-      <td><a href="tel:${o.phone}" class="btn btn-outline btn-sm">📞</a></td>
+      <td style="display:flex;flex-direction:column;gap:.3rem">
+        <a href="tel:${o.phone}" class="btn btn-outline btn-sm">📞 Call</a>
+        ${o.email ? `<a href="mailto:${o.email}" class="btn btn-outline btn-sm">✉️ Mail</a>` : ''}
+      </td>
     </tr>`;}).join('') || '<tr><td colspan="9" style="text-align:center;color:#9ca3af;padding:2rem">No orders yet</td></tr>';
 }
 
